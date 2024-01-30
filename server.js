@@ -3,6 +3,7 @@ import express from "express";
 const app = express();
 const port = 9999;
 
+app.use(express.json()); // to support JSON-encoded bodies
 // CREATE A SERVER AND API  ENDPOINTS
 
 // GET / (root)
@@ -54,6 +55,15 @@ const logEndPoints = () => {
     }
   });
 };
+
+// POST /add-player/ (create a new player)
+
+app.post("/add-player", (req, res) => {
+  console.log("req.body:", req.body);
+  const newPlayer = req.body;
+  players.push(newPlayer);
+  res.send(newPlayer);
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
