@@ -10,6 +10,14 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
+app.get("/giaco", (req, res) => {
+  res.send("Hello World!");
+});
+
+app.get("/test", (req, res) => {
+  res.send("Hello World!");
+});
+
 const players = [
   {
     id: 1,
@@ -37,7 +45,9 @@ app.get("/players/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const player = players.find((player) => player.id === id);
   // update the response status if the player is not found
-  if (!player) res.status(404).send("Player not found");
+  if (!player) {
+    res.status(404).send("Player not found");
+  }
   res.send(player);
 });
 
@@ -56,6 +66,6 @@ const logEndPoints = () => {
 };
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on port ${port} \n`);
   logEndPoints();
 });
