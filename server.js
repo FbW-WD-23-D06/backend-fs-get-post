@@ -3,6 +3,7 @@ import express from "express";
 const app = express();
 const port = 9999;
 
+// middleweare (call this middleweare for each post-request with content type json)
 app.use(express.json()); // to support JSON-encoded bodies
 // CREATE A SERVER AND API  ENDPOINTS
 
@@ -55,14 +56,6 @@ app.get("/players/:id", (req, res) => {
  */
 
 // GET /players/ player:id are the endpoints of our API
-const logEndPoints = () => {
-  app._router.stack.forEach((r) => {
-    if (r.route && r.route.path) {
-      const url = `http://localhost:${port}${r.route.path}`;
-      console.log(url);
-    }
-  });
-};
 
 // POST /add-player/ (create a new player)
 
@@ -73,14 +66,24 @@ const logEndPoints = () => {
 
 // -X POST: to specify the method
 // -H (headers) "Content-Type: application/json": to specify the content type
-// -d (data) '{"name":"Michael Jordan","team":"Bulls","number":23}': to specify the data to send
+// -d (data / request.body) '{"name":"Michael Jordan","team":"Bulls","number":23}': to specify the data to send
 
 app.post("/add-player", (req, res) => {
   console.log("req.body:", req.body);
+  console.log('req:',req);
   const newPlayer = req.body;
   players.push(newPlayer);
   res.send(newPlayer);
 });
+
+const logEndPoints = () => {
+  app._router.stack.forEach((r) => {
+    if (r.route && r.route.path) {
+      const url = `http://localhost:${port}${r.route.path}`;
+      console.log(url);
+    }
+  });
+};
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
