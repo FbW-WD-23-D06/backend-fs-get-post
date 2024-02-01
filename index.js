@@ -12,8 +12,18 @@ const writeFile = (filePath, data) => {
 };
 
 writeFile("test.txt", "Hello World!");
+writeFile("file.txt", "Hello Dev Sqad!");
 writeFile("script.js", "console.log('Hello World!')");
+writeFile(
+  "App.jsx",
+  "import React from react \n export default function App(){return(<>App Component</>)}"
+);
 
+// const writeFolder = () => {
+//   fs.mkdirSync("emanuela");
+// };
+
+// writeFolder();
 /**
  * Reads the content of a file synchronously.
  * @param {string} filePath - The path to the file.
@@ -27,3 +37,6 @@ const readFile = (filePath) => {
 
 console.log(readFile("test.txt"));
 console.log(readFile("script.js"));
+
+const testFileContent = readFile("test.txt");
+console.log('testFileContent:',testFileContent);
