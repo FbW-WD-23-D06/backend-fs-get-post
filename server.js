@@ -1,88 +1,46 @@
+import "./config.js"; // this will load the .env file
 import express from "express";
+import fs from "node:fs";
+import { logEndPoints } from "./utils.js";
 
 const app = express();
-const port = 9999;
+const port = process.env.PORT;
 
-app.use(express.json()); // to support JSON-encoded bodies
-// CREATE A SERVER AND API  ENDPOINTS
 
-// GET / (root)
+const playersJSONFilePath = "./players.json";
 
-// get data from the endpoint using curl: curl http://localhost:9999
+app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Welcome to the NBA API");
 });
-
-const players = [
-  {
-    id: 1,
-    name: "Lebron James",
-    team: "Lakers",
-    number: 23,
-  },
-
-  {
-    id: 2,
-    name: "Kevin Durant",
-    team: "Nets",
-    number: 7,
-  },
-];
-
-// GET /players
-
-// get data from the endpoint using curl: curl http://localhost:9999/players
 
 app.get("/players", (req, res) => {
-  res.send(players);
+  const data = fs.readFileSync(playersJSONFilePath, "utf8");
+  // res.send(data); // this will download the file
+  res.send(JSON.parse(data)); // this will send the data as JSON
 });
-
-// GET /players/:id
-
-// get data from the endpoint using curl: curl http://localhost:9999/players/1  (get the player with id 1)
 
 app.get("/players/:id", (req, res) => {
   const id = parseInt(req.params.id);
+  const players = JSON.parse(fs.readFileSync(playersJSONFilePath));
   const player = players.find((player) => player.id === id);
   // update the response status if the player is not found
   if (!player) res.status(404).send("Player not found");
   res.send(player);
 });
 
-/**
- * Logs all the endpoints of the server.
- */
-
-// GET /players/ player:id are the endpoints of our API
-const logEndPoints = () => {
-  app._router.stack.forEach((r) => {
-    if (r.route && r.route.path) {
-      const url = `http://localhost:${port}${r.route.path}`;
-      console.log(url);
-    }
-  });
-};
-
-// POST /add-player/ (create a new player)
-
-// add a new player using curl:
-//
-
-// curl -X POST http://localhost:9999/add-player -H "Content-Type: application/json" -d '{"name":"Michael Jordan","team":"Bulls","number":23}'
-
-// -X POST: to specify the method
-// -H (headers) "Content-Type: application/json": to specify the content type
-// -d (data) '{"name":"Michael Jordan","team":"Bulls","number":23}': to specify the data to send
-
 app.post("/add-player", (req, res) => {
+  console.log('req:',req);
   console.log("req.body:", req.body);
-  const newPlayer = req.body;
+  const players = JSON.parse(fs.readFileSync(playersJSONFilePath));
+  const newPlayer = { id: players.length + 1, ...req.body };
   players.push(newPlayer);
+  fs.writeFileSync(playersJSONFilePath, JSON.stringify(players));
   res.send(newPlayer);
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-  logEndPoints();
+  console.log(`Server is running on port ${port} \n`);
+  logEndPoints(app, port);
 });
